@@ -11,24 +11,19 @@ def data_prep():
     df_Clean.rename(columns = {'Time' : 'TransactionTime', 'Amount' : 'TransactionAmount', 'Class' : 'IsFraud'}, inplace=True)
 
     # Add column for Hour of day
-    df_Clean['HourOfDay'] = pd.NA
+    df_Clean['HourOfDay'] = (df_Clean['TransactionTime'] / 3600) % 24
     # Add column for Fraud Label
-    df_Clean['FraudLabel'] = pd.NA
+    df_Clean['FraudLabel'] = np.where(df_Clean['IsFraud'] == 1, 'Fraud', 'Not Fraud')
     # Add column for day of transaction
-    df_Clean['TransactionDay'] = pd.NA
-
-    for index, row in df_Clean.iterrows():
-        if row['IsFraud'] == 0:
-            row['FraudLabel'] = 'Not Fraud'
-        elif row['IsFraud'] == 1:
-            row['FraudLabel'] = 'Fraud'
-
-        row['TransactionDay'] = row['TransactionTime'] // 86400
-        row['HourOfDay'] = (row['TransactionTime'] / 3600) % 24
+    df_Clean['TransactionDay'] = (df_Clean['TransactionTime'] // 86400) + 1
     
     return df_Clean
+
+def aggregate_data(df):
+    pass
 
     
 
 if __name__ == "__main__":
-    print(data_prep().head())
+    print(data_prep())
+    print(aggregate_data(data_prep()))
