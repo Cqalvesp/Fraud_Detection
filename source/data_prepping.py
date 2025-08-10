@@ -19,42 +19,10 @@ def clean_raw_data():
     
     return df_Clean
 
-def aggregate_data(df, view_type):
-
-    def fraud_summary(grouped_df, view_type):
-
-        summary = grouped_df.agg(
-            TotalTransactions=("IsFraud", "count"),
-            FraudTransactions=("IsFraud", "sum")
-        ).reset_index()
-        summary["FraudRate (%)"] = (
-            summary["FraudTransactions"] / summary["TotalTransactions"] * 100
-        )
-        summary["ViewType"] = view_type
-
-        return summary
-
-
-    fraud_by_day = fraud_summary(df.groupby("TransactionDay"), "By Day")
-
-
-    fraud_by_hour = fraud_summary(df.groupby("HourOfDay"), "By Hour")
-
-
-    bins = [0, 10, 100, 500, float("inf")]
-    labels = ["0-10", "10-100", "100-500", "500+"]
-    df["AmountBin"] = pd.cut(df["TransactionAmount"], bins=bins, labels=labels, right=False)
-
-    fraud_by_amount = fraud_summary(df.groupby("AmountBin"), "By Amount Bin")
-
-
-    combined_summary = pd.concat([fraud_by_day, fraud_by_hour, fraud_by_amount], ignore_index=True)
-
-
-    combined_summary.to_csv("data/creditcard_summary.csv", index=False)
 
     
 
 if __name__ == "__main__":
     print(clean_raw_data())
-    print(aggregate_data(clean_raw_data()))
+    clean_raw_data().to_csv('C:/Users/cqalv/Documents/Projects/Fraud_Detection/data/creditcard_clean.csv', index=False)
+
