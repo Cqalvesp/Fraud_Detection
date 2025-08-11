@@ -10,7 +10,7 @@ import seaborn as sns
 
 df = pd.read_csv('C:/Users/cqalv/Documents/Projects/Fraud_Detection/data/creditcard_clean.csv')
 
-def class_imbalance():
+def class_imbalance(df):
     # Calculate percentages
     fraud_counts = df['IsFraud'].value_counts(normalize=True) * 100
     fraud_df = fraud_counts.rename_axis('IsFraud').reset_index(name='Percentage')
@@ -34,6 +34,19 @@ def class_imbalance():
 
     plt.show()
     return
+
+def heatmap(df):
+    pass
+
+def fraud_frequency(df):
+    pass
+
+if __name__ == "__main__":
+    data = pd.read_csv('C:/Users/cqalv/Documents/Projects/Fraud_Detection/data/creditcard_clean.csv')
+
+    class_imbalance(data)
+    heatmap(data)
+    fraud_frequency(data)
 
 
 
