@@ -32,14 +32,42 @@ def class_imbalance(df):
     for index, row in fraud_df.iterrows():
         plt.text(row.name, row.Percentage + 1, f"{row.Percentage:.2f}%", ha='center')
 
-    plt.show()
+    plt.savefig("C:/Users/cqalv/Documents/Projects/Fraud_Detection/visualizations/class_imbalance.pdf", format="pdf")
     return
 
 def heatmap(df):
-    pass
+    corr = df.corr(numeric_only=True)
+
+    sns.set_style("white")
+    plt.figure(figsize=(12, 8))
+    sns.heatmap(corr, cmap="coolwarm", annot=False, cbar=True)
+    plt.title("Feature Correlation Heatmap", fontsize=16)
+    plt.tight_layout()
+    
+    plt.savefig("C:/Users/cqalv/Documents/Projects/Fraud_Detection/visualizations/heatmap.pdf", format="pdf")
+    print(
+        corr["IsFraud"]
+        .sort_values(ascending=False)
+        .to_string()
+    )
+    return
 
 def fraud_frequency(df):
-    pass
+    hourly = (
+    df.groupby("HourOfDay")
+      .agg(total=("IsFraud", "count"), fraud=("IsFraud", "sum"))
+      .reset_index()
+    )
+    hourly["fraud_rate_pct"] = hourly["fraud"] / hourly["total"] * 100
+
+    plt.figure(figsize=(10, 4))
+    sns.barplot(data=hourly, x="HourOfDay", y="fraud_rate_pct", color="salmon")
+    plt.title("Fraud Rate (%) by Hour of Day")
+    plt.xlabel("Hour of Day (0–23)")
+    plt.ylabel("Fraud Rate (%)")
+    plt.tight_layout()
+    plt.savefig("C:/Users/cqalv/Documents/Projects/Fraud_Detection/visualizations/fraud_frequency.pdf", format="pdf")
+    return
 
 if __name__ == "__main__":
     data = pd.read_csv('C:/Users/cqalv/Documents/Projects/Fraud_Detection/data/creditcard_clean.csv')
