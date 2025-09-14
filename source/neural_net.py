@@ -5,7 +5,7 @@ import torch.nn.functional as F
 # Model Class
 class FraudDetectionModel(nn.Module):
     
-    def __init__(self, input_attributes=30, hl1=16, hl2=8):
+    def __init__(self, input_attributes=30, hl1=64, hl2=32):
         super().__init__()
         self.connection1 = nn.Linear(input_attributes, hl1)
         self.connection2 = nn.Linear(hl1, hl2)
