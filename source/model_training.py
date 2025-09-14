@@ -4,6 +4,7 @@ import numpy as np
 
 # Libraries for NN training 
 import torch
+from torch.utils.data import TensorDataset, DataLoader
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
@@ -37,6 +38,9 @@ y_train = torch.FloatTensor(y_train).view(-1, 1)
 X_test = torch.FloatTensor(X_test)
 y_test = torch.FloatTensor(y_test).view(-1, 1)
 
+train_dataset = TensorDataset(X_train, y_train)
+train_loader = DataLoader(train_dataset, batch_size=512, shuffle=True)
+
 # Count of fraud vs nonfraud
 nonfraud_count = (y_train == 0).sum()
 fraud_count = (y_train == 1).sum()
@@ -59,38 +63,31 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 # Training Loop for Model
 # An Epoch is one pass of all training data through model
 
-epochs = 100
+epochs = 5000
 losses = []
 
-for i in range(epochs):
-    # Predicted results from data
-    y_prediction = model(X_train) 
+for epoch in range(epochs):
+    for X_batch, y_batch in train_loader:
 
-    # Measure prediction error
-    # Predicted values vs training values
-    loss = criterion(y_prediction, y_train)
+        # Prediction and loss calculation
+        y_prediction = model(X_batch)
+        loss = criterion(y_prediction, y_batch)
 
-    # Track losses
-    losses.append(loss.detach().numpy())
+        # Back propagation
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step
 
     # Print every 10 loops
-    if i % 10 == 0:
-        print(f'Epoch: {i} and loss: {loss}')
-
-    # Back propagation
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step
-
-for name, param in model.named_parameters():
-    if param.grad is not None:
-        print(name, param.grad.norm().item())
+    if epoch % 10 == 0:
+        print(f"Epoch: {epoch}, loss: {loss.item():.4f}")
+        losses.append(loss.item())
 
 # --------------GRAPHING----------------
 # Graph Neural Network Training Loss over time
-plt.plot(range(epochs), losses)
+plt.plot(losses)
 plt.ylabel("loss/error")
-plt.xlabel("epoch")
+plt.xlabel("batches")
 plt.show()
 
 
