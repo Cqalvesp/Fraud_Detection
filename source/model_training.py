@@ -60,19 +60,29 @@ criterion = torch.nn.BCEWithLogitsLoss(pos_weight=torch.tensor([fraud_weight]))
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 # Oversample the dataset to make up for lack of fraud
+
+# SMOTE
 sm = SMOTE(random_state = 42)
 X_sample, y_sample = sm.fit_resample(X_train,y_train)
 
+# Random Oversampling
 oversample = RandomOverSampler(sampling_strategy='minority')
+X_over, y_over = oversample.fit_resample(X_train, y_train)
 
 # Training Loop for Model
 # An Epoch is one pass of all training data through model
+
+train_dataset1 = TensorDataset(X_sample, y_sample)
+train_loader1 = DataLoader(train_dataset1, batch_size=512, shuffle=True)
+
+train_dataset2 = TensorDataset(X_over, y_over)
+train_loader2 = DataLoader(train_dataset2, batch_size=512, shuffle=True)
 
 epochs = 50
 losses = []
 
 for epoch in range(epochs):
-    for X_batch, y_batch in train_loader:
+    for X_batch, y_batch in train_loader1:
 
         # Prediction and loss calculation
         y_prediction = model(X_batch)
