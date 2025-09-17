@@ -45,7 +45,7 @@ The project demonstrates skills in **data preprocessing, machine learning, deep 
 ## 🛠️ Tech Stack
 - **Python**: PyTorch, scikit-learn, pandas, numpy, matplotlib, imbalanced-learn  
 - **SQL**: MySQL (planned for deployment)  
-- **Flask** (planned for deployment)  
+- **FastAPI** (planned for deployment)  
 - **Version Control**: Git/GitHub  
 
 
