@@ -7,10 +7,7 @@ import torch
 from torch.utils.data import TensorDataset, DataLoader
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-
-from neural_net import FraudDetectionModel
-import matplotlib.pyplot as plt
-
+from imblearn.over_sampling import RandomOverSampler, SMOTE
 
 
 
@@ -51,6 +48,8 @@ fraud_weight = nonfraud_count / fraud_count
 
 
 # -------------TRAINING---------------------
+from neural_net import FraudDetectionModel
+
 # Instance of model
 model = FraudDetectionModel(input_attributes=X_train.shape[1])
 
@@ -60,10 +59,16 @@ criterion = torch.nn.BCEWithLogitsLoss(pos_weight=torch.tensor([fraud_weight]))
 # Optimizer Adam Algorithm, lr = 0.001
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
+# Oversample the dataset to make up for lack of fraud
+sm = SMOTE(random_state = 42)
+X_sample, y_sample = sm.fit_resample(X_train,y_train)
+
+oversample = RandomOverSampler(sampling_strategy='minority')
+
 # Training Loop for Model
 # An Epoch is one pass of all training data through model
 
-epochs = 5000
+epochs = 50
 losses = []
 
 for epoch in range(epochs):
@@ -82,13 +87,6 @@ for epoch in range(epochs):
     if epoch % 10 == 0:
         print(f"Epoch: {epoch}, loss: {loss.item():.4f}")
         losses.append(loss.item())
-
-# --------------GRAPHING----------------
-# Graph Neural Network Training Loss over time
-plt.plot(losses)
-plt.ylabel("loss/error")
-plt.xlabel("batches")
-plt.show()
 
 
 
