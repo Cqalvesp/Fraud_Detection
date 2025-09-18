@@ -4,7 +4,7 @@
 This project is an end-to-end machine learning pipeline for **credit card fraud detection**, built to handle highly **imbalanced datasets**.  
 The goal is to identify fraudulent transactions with high accuracy while minimizing false positives.  
 
-The project demonstrates skills in **data preprocessing, machine learning, deep learning with PyTorch, and handling imbalanced data**, all while following best practices in data science project structure.
+The project demonstrates **data preprocessing, machine learning, deep learning with PyTorch, and handling imbalanced data**, all while following best practices in data science project structure.
 
 ---
 
