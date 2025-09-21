@@ -35,9 +35,6 @@ y_train = torch.FloatTensor(y_train).view(-1, 1)
 X_test = torch.FloatTensor(X_test)
 y_test = torch.FloatTensor(y_test).view(-1, 1)
 
-train_dataset = TensorDataset(X_train, y_train)
-train_loader = DataLoader(train_dataset, batch_size=512, shuffle=True)
-
 # Count of fraud vs nonfraud
 nonfraud_count = (y_train == 0).sum()
 fraud_count = (y_train == 1).sum()
@@ -64,6 +61,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 # SMOTE
 sm = SMOTE(random_state = 42)
 X_sample, y_sample = sm.fit_resample(X_train,y_train)
+
 
 # Random Oversampling
 oversample = RandomOverSampler(sampling_strategy='minority')
