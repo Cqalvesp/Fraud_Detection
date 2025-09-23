@@ -28,13 +28,6 @@ X = scaler.fit_transform(X)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=29)
 
-# Convert features to tensors
-X_train = torch.FloatTensor(X_train)
-y_train = torch.FloatTensor(y_train).view(-1, 1)
-
-X_test = torch.FloatTensor(X_test)
-y_test = torch.FloatTensor(y_test).view(-1, 1)
-
 # Count of fraud vs nonfraud
 nonfraud_count = (y_train == 0).sum()
 fraud_count = (y_train == 1).sum()
@@ -42,6 +35,32 @@ fraud_count = (y_train == 1).sum()
 # Fraud weight and ratio of class imbalance
 fraud_weight = nonfraud_count / fraud_count
 
+# Oversample the dataset to make up for lack of fraud
+
+# SMOTE
+sm = SMOTE(random_state = 42)
+X_sample, y_sample = sm.fit_resample(X_train,y_train)
+
+# Convert features to tensors
+X_sample = torch.FloatTensor(X_train)
+y_sample = torch.FloatTensor(y_train).view(-1, 1)
+
+X_test = torch.FloatTensor(X_test)
+y_test = torch.FloatTensor(y_test).view(-1, 1)
+
+train_dataset1 = TensorDataset(X_sample, y_sample)
+train_loader1 = DataLoader(train_dataset1, batch_size=512, shuffle=True)
+
+# Random Oversampling
+oversample = RandomOverSampler(sampling_strategy='minority')
+X_over, y_over = oversample.fit_resample(X_train, y_train)
+
+# Convert features to tensors
+X_over = torch.FloatTensor(X_train)
+y_over = torch.FloatTensor(y_train).view(-1, 1)
+
+train_dataset2 = TensorDataset(X_over, y_over)
+train_loader2 = DataLoader(train_dataset2, batch_size=512, shuffle=True)
 
 
 # -------------TRAINING---------------------
@@ -56,31 +75,14 @@ criterion = torch.nn.BCEWithLogitsLoss(pos_weight=torch.tensor([fraud_weight]))
 # Optimizer Adam Algorithm, lr = 0.001
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-# Oversample the dataset to make up for lack of fraud
-
-# SMOTE
-sm = SMOTE(random_state = 42)
-X_sample, y_sample = sm.fit_resample(X_train,y_train)
-
-
-# Random Oversampling
-oversample = RandomOverSampler(sampling_strategy='minority')
-X_over, y_over = oversample.fit_resample(X_train, y_train)
-
 # Training Loop for Model
 # An Epoch is one pass of all training data through model
-
-train_dataset1 = TensorDataset(X_sample, y_sample)
-train_loader1 = DataLoader(train_dataset1, batch_size=512, shuffle=True)
-
-train_dataset2 = TensorDataset(X_over, y_over)
-train_loader2 = DataLoader(train_dataset2, batch_size=512, shuffle=True)
 
 epochs = 50
 losses = []
 
 for epoch in range(epochs):
-    for X_batch, y_batch in train_loader1:
+    for X_batch, y_batch in train_loader2:
 
         # Prediction and loss calculation
         y_prediction = model(X_batch)
@@ -89,7 +91,7 @@ for epoch in range(epochs):
         # Back propagation
         optimizer.zero_grad()
         loss.backward()
-        optimizer.step
+        optimizer.step()
 
     # Print every 10 loops
     if epoch % 10 == 0:
