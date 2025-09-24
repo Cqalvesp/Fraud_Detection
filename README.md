@@ -26,6 +26,7 @@ The project demonstrates **data preprocessing, machine learning, deep learning w
   - Adjusted model architectures (number of nodes & layers).
   - Evaluated impact of oversampling vs. weighted losses.
   - Tracked fraud vs. non-fraud class ratios throughout training.
+  - Incorporated **SMOTE** and compare against Random Oversampling. 
 
 - **Visualization**
   - Plotted loss curves during training to diagnose underfitting/overfitting.
@@ -33,8 +34,7 @@ The project demonstrates **data preprocessing, machine learning, deep learning w
 
 ---
 
-## 📊 Next Steps
-- Incorporate **SMOTE** and compare against Random Oversampling.  
+## 📊 Next Steps 
 - Fine-tune the **model architecture and hyperparameters**.  
 - Evaluate performance using **precision/recall tradeoffs** and **confusion matrices**.  
 - Deploy the model via a **Flask API**, connected to a **MySQL database** for real-time predictions.  
